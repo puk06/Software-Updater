@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Software Updater": {
+      "commandName": "Project",
+      "commandLineArgs": "v1.1.1-Release puk06 RealtimePPUR"
+    }
+  }
+}
