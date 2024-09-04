@@ -16,10 +16,8 @@ namespace Software_Updater.Classes
 
             Console.WriteLine("ファイルのダウンロードを開始しています...");
 
-            // Create a new WebClient instance
             using var client = new WebClient();
 
-            // Attach an event handler to the DownloadProgressChanged event
             client.DownloadProgressChanged += (sender, e) =>
             {
                 Console.Write($"\rファイルのダウンロード中です... {e.ProgressPercentage}% 完了");
