@@ -22,7 +22,6 @@ namespace Software_Updater.Classes
                 Console.Write($"\rファイルのダウンロード中です... {e.ProgressPercentage}% 完了");
             };
 
-            // Download the file asynchronously and wait for it to complete
             await client.DownloadFileTaskAsync(new Uri(downloadUrl), tempFile);
 
             Console.WriteLine("\nダウンロードが完了しました！");
@@ -42,6 +41,7 @@ namespace Software_Updater.Classes
                 Thread.Sleep(3000);
                 return;
             }
+
             var softwarePath = Directory.GetParent(currentPath)?.FullName;
             if (softwarePath == null)
             {

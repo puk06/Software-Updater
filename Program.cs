@@ -53,14 +53,11 @@ namespace Software_Updater
             author = args.Length > 1 ? args[1] : null;
             softwareName = args.Length > 2 ? args[2] : null;
 
-            if (args.Length != 3 || string.IsNullOrEmpty(tag))
-            {
-                Console.WriteLine("アップデートに必要な情報の取得に失敗しました。");
-                Thread.Sleep(3000);
-                return false;
-            }
+            if (args.Length == 3 && !string.IsNullOrEmpty(tag)) return true;
+            Console.WriteLine("アップデートに必要な情報の取得に失敗しました。");
+            Thread.Sleep(3000);
+            return false;
 
-            return true;
         }
 
         private static bool ConfirmUpdate()
@@ -84,9 +81,9 @@ namespace Software_Updater
             return Task.CompletedTask;
         }
 
-        private static ReleaseFile SelectReleaseFile(ReleaseFile[] releaseFiles)
+        private static ReleaseFile SelectReleaseFile(IReadOnlyList<ReleaseFile> releaseFiles)
         {
-            if (releaseFiles.Length == 1)
+            if (releaseFiles.Count == 1)
                 return releaseFiles[0];
 
             int selectedIndex = 0;
@@ -95,7 +92,7 @@ namespace Software_Updater
                 Console.Clear();
                 Console.WriteLine("アップデートファイルが複数見つかりました。どのアップデートをダウンロードしますか？\n");
 
-                for (int i = 0; i < releaseFiles.Length; i++)
+                for (int i = 0; i < releaseFiles.Count; i++)
                 {
                     if (i == selectedIndex)
                     {
@@ -112,7 +109,7 @@ namespace Software_Updater
                 var keyInfo = Console.ReadKey();
                 if (keyInfo.Key == ConsoleKey.UpArrow && selectedIndex > 0)
                     selectedIndex--;
-                else if (keyInfo.Key == ConsoleKey.DownArrow && selectedIndex < releaseFiles.Length - 1)
+                else if (keyInfo.Key == ConsoleKey.DownArrow && selectedIndex < releaseFiles.Count - 1)
                     selectedIndex++;
                 else if (keyInfo.Key == ConsoleKey.Enter)
                     return releaseFiles[selectedIndex];
