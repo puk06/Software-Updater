@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Octokit;
+using Software_Updater.Classes;
 
 namespace Software_Updater
 {
@@ -40,7 +41,8 @@ namespace Software_Updater
                 Console.WriteLine($"{softwareName}を終了しました。アップデートを開始します。");
 
                 var releaseFiles = await GetReleaseFiles(tag, author, softwareName);
-                releaseFiles = releaseFiles.Where(x => !x.Contains("archive/refs")).ToArray();
+                //releaseFiles = releaseFiles.Where(x => !x.DownloadUrl.Contains("archive/refs")).ToArray();
+                var downloadFile = releaseFiles[0];
                 if (releaseFiles.Length == 0)
                 {
                     Console.WriteLine("アップデートファイルの取得に失敗しました。");
@@ -48,9 +50,63 @@ namespace Software_Updater
                     return;
                 }
 
-                var releaseFile = releaseFiles[0];
+                int selectedIndex = 0;
 
-                var updater = new Classes.Updater(releaseFile, softwareName);
+                if (releaseFiles.Length > 1)
+                {
+                    while (true)
+                    {
+                        Console.Clear();
+
+                        Console.WriteLine("アップデートファイルが複数見つかりました。どのアップデートをダウンロードしますか？\n");
+
+                        for (int i = 0; i < releaseFiles.Length; i++)
+                        {
+                            if (i == selectedIndex)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                Console.WriteLine($"> {i + 1}: {releaseFiles[i].Filename}");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"{i + 1}: {releaseFiles[i].Filename}");
+                            }
+                        }
+
+                        ConsoleKeyInfo keyInfo = Console.ReadKey();
+
+                        if (keyInfo.Key == ConsoleKey.UpArrow)
+                        {
+                            if (selectedIndex > 0)
+                            {
+                                selectedIndex--;
+                            }
+                        }
+                        else if (keyInfo.Key == ConsoleKey.DownArrow)
+                        {
+                            if (selectedIndex < releaseFiles.Length - 1)
+                            {
+                                selectedIndex++;
+                            }
+                        }
+                        else if (keyInfo.Key == ConsoleKey.Enter)
+                        {
+                            downloadFile = releaseFiles[selectedIndex];
+                            break;
+                        }
+                    }
+                }
+                else if (releaseFiles.Length == 1)
+                {
+                    downloadFile = releaseFiles[0];
+                }
+                else
+                {
+                    Console.WriteLine("アップデートファイルが見つかりませんでした。");
+                }
+
+                var updater = new Updater(downloadFile.DownloadUrl, softwareName);
 
                 await updater.Update();
 
@@ -64,19 +120,27 @@ namespace Software_Updater
             }
         }
 
-        private static async Task<string[]> GetReleaseFiles(string version, string author, string softwareName)
+        private static async Task<Releases[]> GetReleaseFiles(string version, string author, string softwareName)
         {
             var githubClient = new GitHubClient(new ProductHeaderValue(softwareName));
             var releases = await githubClient.Repository.Release.GetAll(author, softwareName);
+            var releaseFiles = new List<Releases>();
             foreach (var release in releases)
             {
                 if (release.TagName == version)
                 {
-                    return release.Assets.Select(x => x.BrowserDownloadUrl).ToArray();
+                    foreach (var asset in release.Assets)
+                    {
+                        releaseFiles.Add(new Releases
+                        {
+                            Filename = asset.Name,
+                            DownloadUrl = asset.BrowserDownloadUrl
+                        });
+                    }
                 }
             }
 
-            return null;
+            return releaseFiles.ToArray();
         }
     }
 }
