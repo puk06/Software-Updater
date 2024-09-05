@@ -13,7 +13,7 @@ namespace Software_Updater
                 if (!ValidateArgs(args, out var tag, out var author, out var softwareName, out var executableName))
                     return;
 
-                if (!ConfirmUpdate())
+                if (!ConfirmUpdate(softwareName, tag))
                     return;
 
                 await TerminateSoftwareProcesses(softwareName, executableName);
