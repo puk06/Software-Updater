@@ -51,58 +51,61 @@ namespace Software_Updater
 
                 int selectedIndex = 0;
 
-                if (releaseFiles.Length > 1)
+                switch (releaseFiles.Length)
                 {
-                    while (true)
-                    {
-                        Console.Clear();
-
-                        Console.WriteLine("アップデートファイルが複数見つかりました。どのアップデートをダウンロードしますか？\n");
-
-                        for (int i = 0; i < releaseFiles.Length; i++)
+                    case > 1:
                         {
-                            if (i == selectedIndex)
+                            while (true)
                             {
-                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                Console.WriteLine($"> {i + 1}: {releaseFiles[i].Filename}");
-                                Console.ResetColor();
-                            }
-                            else
-                            {
-                                Console.WriteLine($"{i + 1}: {releaseFiles[i].Filename}");
-                            }
-                        }
+                                Console.Clear();
 
-                        ConsoleKeyInfo keyInfo = Console.ReadKey();
+                                Console.WriteLine("アップデートファイルが複数見つかりました。どのアップデートをダウンロードしますか？\n");
 
-                        if (keyInfo.Key == ConsoleKey.UpArrow)
-                        {
-                            if (selectedIndex > 0)
-                            {
-                                selectedIndex--;
+                                for (int i = 0; i < releaseFiles.Length; i++)
+                                {
+                                    if (i == selectedIndex)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Cyan;
+                                        Console.WriteLine($"> {i + 1}: {releaseFiles[i].Filename}");
+                                        Console.ResetColor();
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"{i + 1}: {releaseFiles[i].Filename}");
+                                    }
+                                }
+
+                                ConsoleKeyInfo keyInfo = Console.ReadKey();
+
+                                if (keyInfo.Key == ConsoleKey.UpArrow)
+                                {
+                                    if (selectedIndex > 0)
+                                    {
+                                        selectedIndex--;
+                                    }
+                                }
+                                else if (keyInfo.Key == ConsoleKey.DownArrow)
+                                {
+                                    if (selectedIndex < releaseFiles.Length - 1)
+                                    {
+                                        selectedIndex++;
+                                    }
+                                }
+                                else if (keyInfo.Key == ConsoleKey.Enter)
+                                {
+                                    downloadFile = releaseFiles[selectedIndex];
+                                    break;
+                                }
                             }
-                        }
-                        else if (keyInfo.Key == ConsoleKey.DownArrow)
-                        {
-                            if (selectedIndex < releaseFiles.Length - 1)
-                            {
-                                selectedIndex++;
-                            }
-                        }
-                        else if (keyInfo.Key == ConsoleKey.Enter)
-                        {
-                            downloadFile = releaseFiles[selectedIndex];
+
                             break;
                         }
-                    }
-                }
-                else if (releaseFiles.Length == 1)
-                {
-                    downloadFile = releaseFiles[0];
-                }
-                else
-                {
-                    Console.WriteLine("アップデートファイルが見つかりませんでした。");
+                    case 1:
+                        downloadFile = releaseFiles[0];
+                        break;
+                    default:
+                        Console.WriteLine("アップデートファイルが見つかりませんでした。");
+                        break;
                 }
 
                 var updater = new Updater(downloadFile.DownloadUrl, softwareName);
