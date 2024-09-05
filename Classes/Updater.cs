@@ -7,7 +7,6 @@ namespace Software_Updater.Classes
 {
     public class Updater(string downloadUrl, string softwarename)
     {
-
         public async Task Update()
         {
             var tempPath = Path.GetTempPath();

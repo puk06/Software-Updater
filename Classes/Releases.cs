@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Software_Updater.Classes
 {
-    internal class Releases
+    internal class ReleaseFile
     {
         public string Filename { get; set; }
         public string DownloadUrl { get; set; }
