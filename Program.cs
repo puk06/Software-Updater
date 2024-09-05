@@ -129,16 +129,14 @@ namespace Software_Updater
             var releaseFiles = new List<Releases>();
             foreach (var release in releases)
             {
-                if (release.TagName == version)
+                if (release.TagName != version) continue;
+                foreach (var asset in release.Assets)
                 {
-                    foreach (var asset in release.Assets)
+                    releaseFiles.Add(new Releases
                     {
-                        releaseFiles.Add(new Releases
-                        {
-                            Filename = asset.Name,
-                            DownloadUrl = asset.BrowserDownloadUrl
-                        });
-                    }
+                        Filename = asset.Name,
+                        DownloadUrl = asset.BrowserDownloadUrl
+                    });
                 }
             }
 
