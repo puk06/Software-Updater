@@ -41,7 +41,6 @@ namespace Software_Updater
                 Console.WriteLine($"{softwareName}を終了しました。アップデートを開始します。");
 
                 var releaseFiles = await GetReleaseFiles(tag, author, softwareName);
-                //releaseFiles = releaseFiles.Where(x => !x.DownloadUrl.Contains("archive/refs")).ToArray();
                 var downloadFile = releaseFiles[0];
                 if (releaseFiles.Length == 0)
                 {
