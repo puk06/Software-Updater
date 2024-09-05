@@ -10,13 +10,13 @@ namespace Software_Updater
         {
             try
             {
-                if (!ValidateArgs(args, out var tag, out var author, out var softwareName))
+                if (!ValidateArgs(args, out var tag, out var author, out var softwareName, out var executableName))
                     return;
 
                 if (!ConfirmUpdate())
                     return;
 
-                await TerminateSoftwareProcesses(softwareName);
+                await TerminateSoftwareProcesses(softwareName, executableName);
 
                 var releaseFiles = await GetReleaseFiles(tag, author, softwareName);
 
@@ -47,31 +47,34 @@ namespace Software_Updater
             }
         }
 
-        private static bool ValidateArgs(string[] args, out string tag, out string author, out string softwareName)
+        private static bool ValidateArgs(string[] args, out string tag, out string author, out string softwareName, out string executableName)
         {
             tag = args.Length > 0 ? args[0] : null;
             author = args.Length > 1 ? args[1] : null;
             softwareName = args.Length > 2 ? args[2] : null;
+            executableName = args.Length > 3 ? args[3] : null;
 
-            if (args.Length == 3 && !string.IsNullOrEmpty(tag)) return true;
+            if (args.Length == 4 && !string.IsNullOrEmpty(tag)) return true;
             Console.WriteLine("アップデートに必要な情報の取得に失敗しました。");
             Thread.Sleep(3000);
             return false;
 
         }
 
-        private static bool ConfirmUpdate()
+        private static bool ConfirmUpdate(string softwareName, string tag)
         {
-            Console.WriteLine("アップデートを行います。もし大丈夫な場合はEnterを押してください。");
+            Console.WriteLine($"ソフト名: {softwareName}");
+            Console.WriteLine($"アップデート後のバージョン: {tag}");
+            Console.WriteLine("上記のアップデートを行います。もし大丈夫な場合はEnterを押してください。");
             Console.ReadLine();
             return true;
         }
 
-        private static Task TerminateSoftwareProcesses(string softwareName)
+        private static Task TerminateSoftwareProcesses(string softwareName, string executableName)
         {
             Console.WriteLine($"{softwareName}関係のソフトをすべて終了します。");
 
-            var processes = Process.GetProcessesByName(softwareName);
+            var processes = Process.GetProcessesByName(executableName);
             foreach (var process in processes)
             {
                 process.Kill();
