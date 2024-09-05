@@ -13,7 +13,7 @@ A simple and lightweight tool to automate the process of downloading the latest 
 To use the Software Updater, run `Software Updater.exe` with the following arguments:
 
 ```php
-Software Updater.exe <GitHub Tag> <GitHub Username> <Repository Name>
+Software Updater.exe <GitHub Tag> <GitHub Username> <Repository Name> <Executable FileName>
 ```
 
 ### Arguments
@@ -21,13 +21,14 @@ Software Updater.exe <GitHub Tag> <GitHub Username> <Repository Name>
 - `<GitHub Tag>`: The specific tag or release version you want to download.
 - `<GitHub Username>`: The GitHub username of the repository owner.
 - `<Repository Name>`: The name of the GitHub repository.
+- `<Executable FileName>`: The name of the Executable Filename.
 
 ### Example
 
-If you want to download the `v1.0.0` release from the repository `example-repo` owned by the user `example-user`, you would run:
+If you want to download the `v1.0.0` release from the repository `example-repo` owned by the user `example-user`, and the executable file is named `example-app.exe`, you would run:
 
 ```php
-"Software Updater.exe" v1.0.0 example-user example-repo
+"Software Updater.exe" "v1.0.0" "example-user" "example-repo" "example-app"
 ```
 
 ### Download Location
