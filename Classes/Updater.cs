@@ -14,10 +14,12 @@ namespace Software_Updater.Classes
             var extractPath = Path.Combine(tempPath, softwarename + ".Temp.zip");
 
             Console.WriteLine("ファイルのダウンロードを開始しています...");
+            if (File.Exists(tempFile)) File.Delete(tempFile);
+            if (Directory.Exists(extractPath)) Directory.Delete(extractPath, true);
 
             using var client = new WebClient();
 
-            client.DownloadProgressChanged += (sender, e) =>
+            client.DownloadProgressChanged += (_, e) =>
             {
                 Console.Write($"\rファイルのダウンロード中です... {e.ProgressPercentage}% 完了");
             };
