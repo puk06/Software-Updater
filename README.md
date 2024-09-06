@@ -35,6 +35,19 @@ If you want to download the `v1.0.0` release from the repository `example-repo` 
 
 The downloaded data will be stored in the parent directory of the folder where `Software Updater.exe` is located.
 
+## Important Note
+
+For the updater to work properly, ensure that the executable file you wish to update is located in the parent directory of the folder containing `Software Updater.exe`. For example, if the executable is in the `/Updater` folder, the folder structure should be as follows:
+
+```markdown
+/YourAppFolder
+    /Updater
+        Software Updater.exe
+    your-app.exe
+```
+
+In this setup, `Software Updater.exe` is in the `/Updater` folder, and the executable you want to update (`your-app.exe`) is in the parent folder.
+
 ## Requirements
 
 - Windows operating system.
