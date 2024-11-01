@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Software_Updater.Classes
 {
-    public class Updater(string downloadUrl, string softwarename)
+    public class Updater(string downloadUrl, string softwarename, IEnumerable<string> ignoreFiles, string language)
     {
         public async Task Update()
         {
@@ -13,7 +13,7 @@ namespace Software_Updater.Classes
             var tempFile = Path.Combine(tempPath, softwarename + ".zip");
             var extractPath = Path.Combine(tempPath, softwarename + ".Temp.zip");
 
-            Console.WriteLine("ファイルのダウンロードを開始しています...");
+            Console.WriteLine(language == "English" ? "Downloading file..." : "ファイルのダウンロードを開始しています...");
             if (File.Exists(tempFile)) File.Delete(tempFile);
             if (Directory.Exists(extractPath)) Directory.Delete(extractPath, true);
 
@@ -21,13 +21,13 @@ namespace Software_Updater.Classes
 
             client.DownloadProgressChanged += (_, e) =>
             {
-                Console.Write($"\rファイルのダウンロード中です... {e.ProgressPercentage}% 完了");
+                Console.Write(language == "English" ? $"\rDownloading file... {e.ProgressPercentage}% complete" : $"\rファイルのダウンロード中です... {e.ProgressPercentage}% 完了");
             };
 
             await client.DownloadFileTaskAsync(new Uri(downloadUrl), tempFile);
 
-            Console.WriteLine("\nダウンロードが完了しました！");
-            Console.WriteLine("ファイルの展開中です...");
+            Console.WriteLine(language == "English" ? "\nDownload completed!" : "ダウンロードが完了しました！");
+            Console.WriteLine(language == "English" ? "Extracting file..." : "ファイルの展開中です...");
 
             ZipFile.ExtractToDirectory(tempFile, extractPath, Encoding.UTF8, true);
             File.Delete(tempFile);
@@ -39,7 +39,7 @@ namespace Software_Updater.Classes
             var currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             if (currentPath == null)
             {
-                Console.WriteLine("カレントフォルダの取得に失敗しました。");
+                Console.WriteLine(language == "English" ? "Failed to get current folder." : "カレントフォルダの取得に失敗しました。");
                 Thread.Sleep(3000);
                 return;
             }
@@ -47,7 +47,7 @@ namespace Software_Updater.Classes
             var softwarePath = Directory.GetParent(currentPath)?.FullName;
             if (softwarePath == null)
             {
-                Console.WriteLine("ソフトウェアのフォルダの取得に失敗しました。");
+                Console.WriteLine(language == "English" ? "Failed to get software folder." : "ソフトウェアのフォルダの取得に失敗しました。");
                 Thread.Sleep(3000);
                 return;
             }
@@ -56,8 +56,9 @@ namespace Software_Updater.Classes
             {
                 var file = files[i];
                 var fileName = Path.GetFileName(file);
+                if (ignoreFiles.Contains(fileName)) continue;
                 var currentFile = Path.Combine(softwarePath, fileName);
-                Console.WriteLine($"ファイルのコピー中です... {i + 1}/{files.Length}: {fileName}");
+                Console.WriteLine(language == "English" ? $"Copying file... {i + 1}/{files.Length}: {fileName}" : $"ファイルのコピー中です... {i + 1}/{files.Length}: {fileName}");
                 File.Copy(file, currentFile, true);
             }
 
@@ -67,7 +68,7 @@ namespace Software_Updater.Classes
                 var folderName = Path.GetFileName(folder);
                 var currentFolder = Path.Combine(softwarePath, folderName);
                 if (!Directory.Exists(currentFolder)) Directory.CreateDirectory(currentFolder);
-                Console.WriteLine($"フォルダのコピー中です... {i + 1}/{folders.Length}: {folderName}");
+                Console.WriteLine(language == "English" ? $"Copying folder... {i + 1}/{folders.Length}: {folderName}" : $"フォルダのコピー中です... {i + 1}/{folders.Length}: {folderName}");
                 DirectoryCopy(folder, currentFolder, true);
             }
 

@@ -5,32 +5,44 @@ namespace Software_Updater.Classes
 {
     internal class Helper
     {
-        public static bool ValidateArgs(string[] args, out string tag, out string author, out string softwareName, out string executableName)
+        public static bool ValidateArgs(string[] args, out string tag, out string author, out string softwareName, out string executableName, out string[] ignoreFiles)
         {
             tag = args.Length > 0 ? args[0] : null;
             author = args.Length > 1 ? args[1] : null;
             softwareName = args.Length > 2 ? args[2] : null;
             executableName = args.Length > 3 ? args[3] : null;
-
-            if (args.Length == 4 && !string.IsNullOrEmpty(tag)) return true;
+            ignoreFiles = args.Length > 4 ? args.Skip(4).ToArray() : Array.Empty<string>();
+            if (args.Length >= 4 && !string.IsNullOrEmpty(tag)) return true;
             Console.WriteLine("アップデートに必要な情報の取得に失敗しました。");
+            Console.WriteLine("Failed to get necessary information for the update.");
             Thread.Sleep(3000);
             return false;
-
         }
 
-        public static bool ConfirmUpdate(string softwareName, string tag)
+        public static bool ConfirmUpdate(string version, string author, string softwareName, string language)
         {
-            Console.WriteLine($"ソフト名: {softwareName}");
-            Console.WriteLine($"アップデート後のバージョン: {tag}");
-            Console.WriteLine("上記のアップデートを行います。もし大丈夫な場合はEnterを押してください。");
-            Console.ReadLine();
+            if (language == "English")
+            {
+                Console.WriteLine($"Software name: {softwareName} ({author}/{softwareName})");
+                Console.WriteLine($"New version: {version}");
+                Console.WriteLine("Please press Enter if the above information is correct and you want to update.");
+                Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine($"ソフト名: {softwareName} ({author}/{softwareName})");
+                Console.WriteLine($"アップデート後のバージョン: {version}");
+                Console.WriteLine("上記の情報を元にアップデートを行います。もし大丈夫な場合はEnterを押してください。");
+                Console.ReadLine();
+            }
+
             return true;
         }
 
         public static Task TerminateSoftwareProcesses(string softwareName, string executableName)
         {
             Console.WriteLine($"{softwareName}関係のソフトをすべて終了します。");
+            Console.WriteLine($"Closing all {softwareName} related software.");
 
             var processes = Process.GetProcessesByName(executableName);
             foreach (var process in processes)
@@ -39,10 +51,11 @@ namespace Software_Updater.Classes
             }
 
             Console.WriteLine($"{softwareName}を終了しました。アップデートを開始します。");
+            Console.WriteLine($"Closed {softwareName}. Starting the update.");
             return Task.CompletedTask;
         }
 
-        public static ReleaseFile SelectReleaseFile(IReadOnlyList<ReleaseFile> releaseFiles)
+        public static ReleaseFile SelectReleaseFile(IReadOnlyList<ReleaseFile> releaseFiles, string language)
         {
             if (releaseFiles.Count == 1)
                 return releaseFiles[0];
@@ -68,18 +81,63 @@ namespace Software_Updater.Classes
                 }
 
                 var keyInfo = Console.ReadKey();
-                if (keyInfo.Key == ConsoleKey.UpArrow && selectedIndex > 0)
-                    selectedIndex--;
-                else if (keyInfo.Key == ConsoleKey.DownArrow && selectedIndex < releaseFiles.Count - 1)
-                    selectedIndex++;
-                else if (keyInfo.Key == ConsoleKey.Enter)
-                    return releaseFiles[selectedIndex];
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.UpArrow when selectedIndex > 0:
+                        selectedIndex--;
+                        break;
+                    case ConsoleKey.DownArrow when selectedIndex < releaseFiles.Count - 1:
+                        selectedIndex++;
+                        break;
+                    case ConsoleKey.Enter:
+                        return releaseFiles[selectedIndex];
+                }
             }
         }
 
-        public static async Task PerformUpdate(string downloadUrl, string softwareName)
+        public static string SelectLanguage()
         {
-            var updater = new Updater(downloadUrl, softwareName);
+            Console.WriteLine("言語を選択してください。");
+            Console.WriteLine("Select a language.\n");
+            string[] languages = { "English", "日本語" };
+            int selectedIndex = 0;
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("Select a language\n");
+
+                for (int i = 0; i < languages.Length; i++)
+                {
+                    if (i == selectedIndex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine($"> {i + 1}: {languages[i]}");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{i + 1}: {languages[i]}");
+                    }
+                }
+
+                var keyInfo = Console.ReadKey();
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.UpArrow when selectedIndex > 0:
+                        selectedIndex--;
+                        break;
+                    case ConsoleKey.DownArrow when selectedIndex < languages.Length - 1:
+                        selectedIndex++;
+                        break;
+                    case ConsoleKey.Enter:
+                        return languages[selectedIndex];
+                }
+            }
+        }
+
+        public static async Task PerformUpdate(string downloadUrl, string softwareName, string[] ignoreFiles, string language)
+        {
+            var updater = new Updater(downloadUrl, softwareName, ignoreFiles, language);
             await updater.Update();
         }
 
