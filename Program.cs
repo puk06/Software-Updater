@@ -8,27 +8,27 @@ namespace Software_Updater
         {
             try
             {
-                if (!ValidateArgs(args, out var tag, out var author, out var softwareName, out var executableName, out var ignoreFiles))
+                var language = SelectLanguage();
+
+                if (!ValidateArgs(args, out var tag, out var author, out var softwareName, out var executableName, out var ignoreFiles, language))
                     return;
 
-                if (!ConfirmUpdate(tag, author, softwareName))
+                if (!ConfirmUpdate(tag, author, softwareName, language))
                     return;
 
-                await TerminateSoftwareProcesses(softwareName, executableName);
+                await TerminateSoftwareProcesses(softwareName, executableName, language);
 
                 var releaseFiles = await GetReleaseFiles(tag, author, softwareName);
 
                 if (releaseFiles.Length == 0)
                 {
-                    Console.WriteLine("アップデートファイルの取得に失敗しました。");
-                    Console.WriteLine("Failed to get update files.");
+                    Console.WriteLine(language == "English" ? "Failed to get update files." : "アップデートファイルの取得に失敗しました。");
                     Thread.Sleep(3000);
                     return;
                 }
 
-                var language = SelectLanguage();
 
-                var downloadFile = SelectReleaseFile(releaseFiles);
+                var downloadFile = SelectReleaseFile(releaseFiles, language);
 
                 if (downloadFile == null)
                 {
@@ -38,7 +38,6 @@ namespace Software_Updater
 
                 await PerformUpdate(downloadFile.DownloadUrl, softwareName, ignoreFiles, language);
 
-                //Console.WriteLine("アップデートが完了しました！ソフトを使ってくれてありがとうございます！");
                 Console.WriteLine(language == "English" ? "Update completed! Thank you for using my software!" : "アップデートが完了しました！ソフトを使ってくれてありがとうございます！");
                 Thread.Sleep(3000);
             }

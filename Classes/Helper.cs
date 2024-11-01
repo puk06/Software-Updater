@@ -5,7 +5,7 @@ namespace Software_Updater.Classes
 {
     internal class Helper
     {
-        public static bool ValidateArgs(string[] args, out string tag, out string author, out string softwareName, out string executableName, out string[] ignoreFiles)
+        public static bool ValidateArgs(string[] args, out string tag, out string author, out string softwareName, out string executableName, out string[] ignoreFiles, string language)
         {
             tag = args.Length > 0 ? args[0] : null;
             author = args.Length > 1 ? args[1] : null;
@@ -13,8 +13,7 @@ namespace Software_Updater.Classes
             executableName = args.Length > 3 ? args[3] : null;
             ignoreFiles = args.Length > 4 ? args.Skip(4).ToArray() : Array.Empty<string>();
             if (args.Length >= 4 && !string.IsNullOrEmpty(tag)) return true;
-            Console.WriteLine("アップデートに必要な情報の取得に失敗しました。");
-            Console.WriteLine("Failed to get necessary information for the update.");
+            Console.WriteLine(language == "English" ? "Failed to get necessary information for the update." : "アップデートに必要な情報の取得に失敗しました。");
             Thread.Sleep(3000);
             return false;
         }
@@ -39,10 +38,9 @@ namespace Software_Updater.Classes
             return true;
         }
 
-        public static Task TerminateSoftwareProcesses(string softwareName, string executableName)
+        public static Task TerminateSoftwareProcesses(string softwareName, string executableName, string language)
         {
-            Console.WriteLine($"{softwareName}関係のソフトをすべて終了します。");
-            Console.WriteLine($"Closing all {softwareName} related software.");
+            Console.WriteLine(language == "English" ? $"Closing all {softwareName} related software." : $"{softwareName}関係のソフトをすべて終了します。");
 
             var processes = Process.GetProcessesByName(executableName);
             foreach (var process in processes)
@@ -50,8 +48,7 @@ namespace Software_Updater.Classes
                 process.Kill();
             }
 
-            Console.WriteLine($"{softwareName}を終了しました。アップデートを開始します。");
-            Console.WriteLine($"Closed {softwareName}. Starting the update.");
+            Console.WriteLine(language == "English" ? $"Closed {softwareName}. Starting the update." : $"{softwareName}を終了しました。アップデートを開始します。");
             return Task.CompletedTask;
         }
 
@@ -64,7 +61,7 @@ namespace Software_Updater.Classes
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("アップデートファイルが複数見つかりました。どのアップデートをダウンロードしますか？\n");
+                Console.WriteLine(language == "English" ? "Multiple update files found. Which update do you want to download?\n" : "アップデートファイルが複数見つかりました。どのアップデートをダウンロードしますか？\n");
 
                 for (int i = 0; i < releaseFiles.Count; i++)
                 {
@@ -97,14 +94,12 @@ namespace Software_Updater.Classes
 
         public static string SelectLanguage()
         {
-            Console.WriteLine("言語を選択してください。");
-            Console.WriteLine("Select a language.\n");
             string[] languages = { "English", "日本語" };
             int selectedIndex = 0;
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("Select a language\n");
+                Console.WriteLine("言語を選択してください / Select a language\n");
 
                 for (int i = 0; i < languages.Length; i++)
                 {

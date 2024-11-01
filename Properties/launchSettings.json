@@ -2,7 +2,7 @@
   "profiles": {
     "Software Updater": {
       "commandName": "Project",
-      "commandLineArgs": "v1.1.0-Release puk06 RealtimePPUR RealtimePPUR"
+      "commandLineArgs": "v1.1.4-Release puk06 RealtimePPUR RealtimePPUR Config.cfg"
     }
   }
 }
