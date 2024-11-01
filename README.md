@@ -13,7 +13,7 @@ A simple and lightweight tool to automate the process of downloading the latest 
 To use the Software Updater, run `Software Updater.exe` with the following arguments:
 
 ```php
-Software Updater.exe <GitHub Tag> <GitHub Username> <Repository Name> <Executable FileName>
+Software Updater.exe <GitHub Tag> <GitHub Username> <Repository Name> <Executable FileName> ...<Ignore Files>
 ```
 
 ### Arguments
