@@ -22,13 +22,14 @@ Software Updater.exe <GitHub Tag> <GitHub Username> <Repository Name> <Executabl
 - `<GitHub Username>`: The GitHub username of the repository owner.
 - `<Repository Name>`: The name of the GitHub repository.
 - `<Executable FileName>`: The name of the Executable Filename.
+- `...<Ignore Files>`: The name of the Ignore Filename.
 
 ### Example
 
 If you want to download the `v1.0.0` release from the repository `example-repo` owned by the user `example-user`, and the executable file is named `example-app.exe`, you would run:
 
 ```php
-"Software Updater.exe" "v1.0.0" "example-user" "example-repo" "example-app"
+"Software Updater.exe" "v1.0.0" "example-user" "example-repo" "example-app" "ignore.1" "ignore.2"
 ```
 
 ### Download Location
