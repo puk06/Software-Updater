@@ -1,0 +1,6 @@
+This software uses the following third-party libraries:
+
+- Octokit (https://github.com/octokit/octokit.net)
+  Licensed under the MIT License.
+  Copyright (c) GitHub, Inc.
+  https://github.com/octokit/octokit.net/blob/main/LICENSE
