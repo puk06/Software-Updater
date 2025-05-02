@@ -58,3 +58,13 @@ In this setup, `Software Updater.exe` is in the `/Updater` folder, and the execu
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
+This software uses the following third-party libraries:
+
+- Octokit (https://github.com/octokit/octokit.net)
+
+  Licensed under the MIT License.
+
+  Copyright (c) GitHub, Inc.
+
+  https://github.com/octokit/octokit.net/blob/main/LICENSE
+
